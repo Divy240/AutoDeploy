@@ -1,50 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>DevOps Dashboard</title>
+  <title>DevOps Task Manager</title>
   <style>
     body {
       font-family: Arial;
       background: #0f172a;
       color: white;
       text-align: center;
-      padding: 50px;
     }
-    .card {
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 10px;
-      display: inline-block;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-    .status {
-      color: #22c55e;
-      font-size: 20px;
+    input, button {
+      padding: 10px;
+      margin: 5px;
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>🚀 DevOps Project Dashboard</h1>
-    <p>Microservices Deployment on AWS</p>
+<h1>🚀 DevOps Task Manager</h1>
 
-    <h2 class="status">Frontend Running ✅</h2>
-    <h2 id="api-data">Connecting to Backend...</h2>
+<input id="taskInput" placeholder="Enter task">
+<button onclick="addTask()">Add Task</button>
 
-    <p>Deployed on AWS EC2 with Docker</p>
-  </div>
+<h2>Tasks:</h2>
+<ul id="taskList"></ul>
 
-  <script>
-    fetch("http://34.201.149.215:8000/")
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("api-data").innerText = "Backend: " + data.message + " ✅";
-      })
-      .catch(() => {
-        document.getElementById("api-data").innerText = "Backend not reachable ❌";
+<script>
+const API = "http://34.201.149.215:8000"; // your EC2 IP
+
+function loadTasks() {
+  fetch(API + "/tasks")
+    .then(res => res.json())
+    .then(data => {
+      let list = document.getElementById("taskList");
+      list.innerHTML = "";
+      data.forEach(task => {
+        let li = document.createElement("li");
+        li.innerText = task;
+        list.appendChild(li);
       });
-  </script>
+    });
+}
+
+function addTask() {
+  let input = document.getElementById("taskInput");
+  
+  fetch(API + "/tasks", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ text: input.value })
+  })
+  .then(() => {
+    input.value = "";
+    loadTasks();
+  });
+}
+
+// Load tasks on start
+loadTasks();
+</script>
 
 </body>
 </html>
