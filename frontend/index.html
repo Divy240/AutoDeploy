@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DevOps App</title>
+</head>
+<body>
+  <h1>Frontend Loaded 🚀</h1>
+  <h2 id="api-data">Loading...</h2>
+
+  <script>
+    fetch("http://localhost:8000/")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("api-data").innerText = data.message;
+      })
+      .catch(() => {
+        document.getElementById("api-data").innerText = "Backend not reachable";
+      });
+  </script>
+</body>
+</html>
